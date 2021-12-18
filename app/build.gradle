@@ -1,0 +1,116 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "com.moanes.awwreddit"
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {configuration ->
+    implementation platform("com.squareup.okhttp3:okhttp-bom:4.9.0")
+
+    androidX(configuration)
+    navigation(configuration)
+    retrofit(configuration)
+    rxJava(configuration)
+    hilt(configuration)
+    imageLoader(configuration)
+    dimens(configuration)
+
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+private static void androidX(configuration) {
+    def version = "1.0.0"
+
+    configuration.implementation "androidx.legacy:legacy-support-v4:$version"
+    configuration.implementation "androidx.cardview:cardview:$version"
+    configuration.implementation "androidx.recyclerview:recyclerview:1.2.0-beta01"
+    configuration.implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    configuration.implementation 'androidx.appcompat:appcompat:1.3.1'
+    configuration.implementation "androidx.preference:preference-ktx:1.1.1"
+    configuration.implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    configuration.implementation "com.google.android.material:material:1.4.0"
+
+}
+
+private static void navigation(configuration) {
+    def nav_version = "2.3.5"
+
+    configuration.implementation "androidx.navigation:navigation-fragment:$nav_version"
+    configuration.implementation "androidx.navigation:navigation-ui:$nav_version"
+    configuration.implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    configuration.implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    configuration.implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+}
+private static void rxJava(configuration) {
+    configuration.implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    configuration.implementation 'io.reactivex.rxjava3:rxjava:3.0.2'
+}
+private static void retrofit(configuration) {
+    def retrofit_version = "2.9.0"
+
+    configuration.implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    configuration.implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    configuration.implementation "com.squareup.retrofit2:adapter-rxjava3:$retrofit_version"
+
+    configuration.implementation "com.squareup.okhttp3:okhttp"
+    configuration.debugImplementation "com.squareup.okhttp3:logging-interceptor"
+
+    configuration.debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+}
+
+private static void hilt(configuration) {
+    def hilt_version = "2.37"
+    configuration.implementation "com.google.dagger:hilt-android:$hilt_version"
+    configuration.implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
+    configuration.kapt "com.google.dagger:hilt-compiler:$hilt_version"
+}
+
+private static void imageLoader(configuration) {
+    configuration.implementation 'com.github.bumptech.glide:glide:4.11.0'
+    configuration.kapt 'com.github.bumptech.glide:compiler:4.11.0'
+}
+
+private static void dimens(configuration) {
+    configuration.implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    configuration.implementation 'com.intuit.ssp:ssp-android:1.0.6'
+}
