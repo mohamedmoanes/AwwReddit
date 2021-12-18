@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-android-extensions'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-
 }
 
 android {
@@ -41,6 +40,7 @@ dependencies {configuration ->
     api project(':datasource')
 
     implementation platform("com.squareup.okhttp3:okhttp-bom:4.9.0")
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     androidX(configuration)
     navigation(configuration)

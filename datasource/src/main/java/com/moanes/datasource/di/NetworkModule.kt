@@ -1,7 +1,10 @@
 package com.moanes.datasource.di
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.moanes.datasource.BuildConfig
 import com.moanes.datasource.network.Service
+import com.moanes.datasource.repositories.PostRepoImpl
+import com.moanes.datasource.repositories.PostsRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,8 +55,12 @@ class NetworkModule {
             OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
+            .addNetworkInterceptor(StethoInterceptor())
             .build()
     }
 
-
+    @Provides
+    fun providePostsRepo(service: Service): PostsRepo {
+        return PostRepoImpl(service)
+    }
 }
