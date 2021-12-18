@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AwwReddit"
 include ':app'
+include ':datasource'

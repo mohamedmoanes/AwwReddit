@@ -36,6 +36,10 @@ android {
 }
 
 dependencies {configuration ->
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api project(':datasource')
+
     implementation platform("com.squareup.okhttp3:okhttp-bom:4.9.0")
 
     androidX(configuration)
