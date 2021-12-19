@@ -83,6 +83,7 @@ private static void room(configuration){
 
     configuration.implementation "androidx.room:room-runtime:$room_version"
     configuration.implementation "androidx.room:room-ktx:$room_version"
+    configuration.implementation "androidx.room:room-rxjava3:$room_version"
     configuration.annotationProcessor "androidx.room:room-compiler:$room_version"
     configuration.kapt  ("androidx.room:room-compiler:$room_version")
 

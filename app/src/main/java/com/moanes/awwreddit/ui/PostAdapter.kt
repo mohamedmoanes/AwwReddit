@@ -11,13 +11,13 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import com.moanes.awwreddit.R
 import com.moanes.awwreddit.utils.setImageURL
-import com.moanes.datasource.model.Children
+import com.moanes.datasource.model.Post
 
-class ChildrenAdapter(
-    private val handleFavorite: (item: Children) -> Unit,
-    private val favoriteIdsList: List<String>
+class PostAdapter(
+    private val handleFavorite: (item: Post, remove: Boolean) -> Unit,
+    private val favoriteIdsList: MutableList<String>
 ) :
-    ListAdapter<Children, ChildrenAdapter.ViewHolder>(ChildrenItemDiffCallback()) {
+    ListAdapter<Post, PostAdapter.ViewHolder>(PostItemDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.post_item, parent, false)
@@ -25,15 +25,24 @@ class ChildrenAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.favoriteBTN.isActivated = favoriteIdsList.contains(item.post.id)
+        val item = getItem(holder.bindingAdapterPosition)
+        holder.favoriteBTN.isActivated = favoriteIdsList.contains(item.id)
 
-        holder.title.text = item.post.title
-        if (!item.post.thumbnail.isNullOrBlank())
-            holder.image.setImageURL(item.post.thumbnail)
-        holder.playIcon.visibility = if (item.post.secureMedia != null) View.VISIBLE
+        holder.title.text = item.title
+        if (!item.thumbnail.isNullOrBlank())
+            holder.image.setImageURL(item.thumbnail)
+        holder.playIcon.visibility = if (item.isVideo != null && item.isVideo) View.VISIBLE
         else
             View.GONE
+
+        holder.favoriteBTN.setOnClickListener {
+            handleFavorite(item, holder.favoriteBTN.isActivated)
+            if (favoriteIdsList.contains(item.id))
+                favoriteIdsList.remove(item.id)
+            else
+                favoriteIdsList.add(item.id)
+            notifyItemChanged(holder.bindingAdapterPosition)
+        }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -43,12 +52,12 @@ class ChildrenAdapter(
         val favoriteBTN: AppCompatImageButton = view.findViewById(R.id.favBTN)
     }
 
-    class ChildrenItemDiffCallback : DiffUtil.ItemCallback<Children>() {
-        override fun areItemsTheSame(oldItem: Children, newItem: Children): Boolean {
-            return oldItem.post.id == newItem.post.id
+    class PostItemDiffCallback : DiffUtil.ItemCallback<Post>() {
+        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Children, newItem: Children): Boolean {
+        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
             return oldItem.equals(newItem)
         }
     }

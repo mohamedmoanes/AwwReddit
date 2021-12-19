@@ -4,10 +4,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moanes.datasource.model.Children
+import com.moanes.datasource.model.Post
 
 abstract class BasePostListFragment:Fragment() {
     abstract val viewModel:BasePostListViewModel
-    private lateinit var adapter:ChildrenAdapter
+    private lateinit var adapter:PostAdapter
     lateinit var recyclerView: RecyclerView
 
     override fun onResume() {
@@ -27,12 +28,14 @@ abstract class BasePostListFragment:Fragment() {
     }
 
     private fun initPostsList() {
-        adapter = ChildrenAdapter(::handleFavorite,ArrayList<String>())
+        adapter = PostAdapter(::handleFavorite, viewModel.favoriteIds)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
     }
 
-    private fun handleFavorite(item: Children){}
+    private fun handleFavorite(item: Post, remove: Boolean) {
+        viewModel.handleFavorite(item, remove)
+    }
 
     private fun handlePagination() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

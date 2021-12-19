@@ -10,10 +10,12 @@ interface PostsRepo {
         limit: Int,
         after: String?
     ): Single<PostsResponse>
+
 }
 
 class PostRepoImpl @Inject constructor(private val remoteService: Service) : PostsRepo {
     override fun getPosts(limit: Int, after: String?): Single<PostsResponse> {
         return remoteService.getPosts("all", limit, after)
     }
+
 }
