@@ -11,6 +11,11 @@ interface PostsRepo {
         after: String?
     ): Single<PostsResponse>
 
+    fun searchPosts(
+        query: String?,
+        limit: Int,
+        after: String?
+    ): Single<PostsResponse>
 }
 
 class PostRepoImpl @Inject constructor(private val remoteService: Service) : PostsRepo {
@@ -18,4 +23,7 @@ class PostRepoImpl @Inject constructor(private val remoteService: Service) : Pos
         return remoteService.getPosts("all", limit, after)
     }
 
+    override fun searchPosts(query: String?, limit: Int, after: String?): Single<PostsResponse> {
+        return remoteService.searchPosts(query, limit, after)
+    }
 }

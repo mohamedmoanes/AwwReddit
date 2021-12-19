@@ -13,4 +13,11 @@ interface Service {
         @Query("limit") limit: Int,
         @Query("after") after: String?
     ): Single<PostsResponse>
+
+    @GET("top.json")
+    fun searchPosts(
+        @Query("q") query: String?,
+        @Query("limit") limit: Int,
+        @Query("after") after: String?
+    ): Single<PostsResponse>
 }

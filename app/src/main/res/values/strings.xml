@@ -5,4 +5,6 @@
     <string name="home">home</string>
     <string name="clear">Clear</string>
     <string name="favorite">Favorite</string>
+    <string name="search_">search...</string>
+    <string name="search">search</string>
 </resources>
