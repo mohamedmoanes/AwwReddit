@@ -12,16 +12,20 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val postsRepo: PostsRepo,favoriteRepo: FavoriteRepo) : BasePostListViewModel(favoriteRepo) {
 
     override fun getPosts() {
+        loadingObservable.onNext(true)
         singleSubscribe(postsRepo.getPosts(25, after), object : ResultListener<PostsResponse> {
             override fun onSuccess(data: PostsResponse) {
                 after=data.data.after
                 for (item in data.data.children){
-                    postList.add(item.post)
+                    postList?.add(item.post)
                 }
                 postsObservable.onNext(postList)
+                loadingObservable.onNext(false)
             }
 
             override fun onFailure(message: String) {
+                loadingObservable.onNext(false)
+                errorObservable.onNext(message)
             }
         })
     }

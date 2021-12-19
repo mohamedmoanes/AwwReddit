@@ -17,25 +17,30 @@ class SearchViewModel @Inject constructor(
         set(value) {
             field = value
             after=null
-            postList.clear()
+            postList?.clear()
             postsObservable.onNext(postList)
         }
 
     override fun getPosts() {
-        if(!query.isNullOrBlank())
-        singleSubscribe(
-            postsRepo.searchPosts(query, 25, after),
-            object : ResultListener<PostsResponse> {
-                override fun onSuccess(data: PostsResponse) {
-                    after = data.data.after
-                    for (item in data.data.children) {
-                        postList.add(item.post)
+        if(!query.isNullOrBlank()) {
+            loadingObservable.onNext(true)
+            singleSubscribe(
+                postsRepo.searchPosts(query, 25, after),
+                object : ResultListener<PostsResponse> {
+                    override fun onSuccess(data: PostsResponse) {
+                        after = data.data.after
+                        for (item in data.data.children) {
+                            postList?.add(item.post)
+                        }
+                        postsObservable.onNext(postList)
+                        loadingObservable.onNext(false)
                     }
-                    postsObservable.onNext(postList)
-                }
 
-                override fun onFailure(message: String) {
-                }
-            })
+                    override fun onFailure(message: String) {
+                        loadingObservable.onNext(false)
+                        errorObservable.onNext(message)
+                    }
+                })
+        }
     }
 }

@@ -11,14 +11,17 @@ import javax.inject.Inject
 class FavoriteViewModel @Inject constructor(private val favoriteRepo: FavoriteRepo) :
     BasePostListViewModel(favoriteRepo) {
     override fun getPosts() {
+        loadingObservable.onNext(true)
         singleSubscribe(favoriteRepo.getFavorites(), object : ResultListener<List<Post>> {
             override fun onSuccess(data: List<Post>) {
-                postList.addAll(data)
+                postList?.addAll(data)
                 postsObservable.onNext(postList)
+                loadingObservable.onNext(false)
             }
 
             override fun onFailure(message: String) {
-               // TODO("Not yet implemented")
+                loadingObservable.onNext(false)
+                errorObservable.onNext(message)
             }
         })
 
@@ -27,7 +30,7 @@ class FavoriteViewModel @Inject constructor(private val favoriteRepo: FavoriteRe
     fun clearFavorites(){
         singleSubscribe(favoriteRepo.clearFavorites(),object : ResultListener<Int>{
             override fun onSuccess(data: Int) {
-                postList.clear()
+                postList?.clear()
                 postsObservable.onNext(postList)
             }
 

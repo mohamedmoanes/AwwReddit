@@ -5,16 +5,19 @@ import com.moanes.awwreddit.base.ResultListener
 import com.moanes.datasource.model.Post
 import com.moanes.datasource.repositories.FavoriteRepo
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 abstract class BasePostListViewModel(private val favoriteRepo: FavoriteRepo) :
     BaseViewModel() {
     var after: String? = null
-    var postsObservable = PublishSubject.create<List<Post>>()
-    val postList = ArrayList<Post>()
-    val favoriteIds=ArrayList<String>()
+
+    var postsObservable: PublishSubject<List<Post>> = PublishSubject.create()
+    var loadingObservable: PublishSubject<Boolean> = PublishSubject.create()
+    var errorObservable: PublishSubject<String> = PublishSubject.create()
+
+    var postList: MutableList<Post>? = ArrayList<Post>()
+    var favoriteIds: MutableList<String>? = ArrayList<String>()
 
     abstract fun getPosts()
 
@@ -22,16 +25,17 @@ abstract class BasePostListViewModel(private val favoriteRepo: FavoriteRepo) :
         getAllFavoritesIds()
     }
 
-    fun addToFavorite(item: Post) {
+    private fun addToFavorite(item: Post) {
         favoriteRepo.addToFavorites(item).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
-    fun removeFromFavorite(item: Post) {
+    private fun removeFromFavorite(item: Post) {
         favoriteRepo.removeFromFavorites(item).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
-    fun handleFavorite(item: Post, remove: Boolean){
+
+    fun handleFavorite(item: Post, remove: Boolean) {
         if (remove)
             removeFromFavorite(item)
         else
@@ -41,7 +45,7 @@ abstract class BasePostListViewModel(private val favoriteRepo: FavoriteRepo) :
     private fun getAllFavoritesIds(){
         singleSubscribe(favoriteRepo.getAllFavoritesIds(),object :ResultListener<List<String>>{
             override fun onSuccess(data: List<String>) {
-                favoriteIds.addAll(data)
+                favoriteIds?.addAll(data)
             }
 
             override fun onFailure(message: String) {
@@ -49,8 +53,19 @@ abstract class BasePostListViewModel(private val favoriteRepo: FavoriteRepo) :
             }
         })
     }
+
     fun loadNextPage() {
         if (after != null)
             getPosts()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        postsObservable.onComplete()
+        loadingObservable.onComplete()
+        errorObservable.onComplete()
+
+        postList = null
+        favoriteIds = null
     }
 }
